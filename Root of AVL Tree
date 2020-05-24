@@ -1,0 +1,167 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+typedef struct AVL{
+	int val;
+	int height;
+	struct AVL* left;
+	struct AVL* right;
+}AVL;
+
+AVL* Insert( AVL *tree, int num);
+int Getheight( AVL *tree );
+int Get( AVL *tree );
+int Max( int a, int b);
+void Print( AVL *tree );
+int Judge( AVL *tree );
+
+int main()
+{
+	int n;
+	scanf("%d", &n);
+	AVL* tree = (AVL*)malloc(sizeof( AVL ));
+	AVL* head = tree;
+	tree->height = 0;
+	tree->left = NULL;
+	tree->right = NULL;
+	int i, num;
+	for( i=0; i<n; i++)
+	{
+		scanf("%d", &num);
+		if( i==0 ){
+			tree->val = num;
+		}else{
+			head = Insert( head, num );
+			//printf("%d\n", head->val);
+			//Print( head );
+		}
+	}
+	printf("%d", head->val);
+    return 0;
+}
+
+AVL* Insert( AVL *tree, int num)
+{
+	AVL *p;
+	if( num < tree->val ){
+		if( tree->left == NULL ){
+			p = (AVL *)malloc( sizeof( AVL ));
+			p->height=1;
+			p->left=NULL;
+			p->right=NULL;
+			p->val = num;
+			tree->left = p;
+		}else{
+			if( num < tree->val )
+				tree->left = Insert( tree->left, num);
+			else
+				tree->right = Insert( tree->right, num);
+		}
+	}else if( num > tree->val ){
+		if( tree->right == NULL ){
+			p = (AVL *)malloc( sizeof( AVL ));
+			p->height = 1;
+			p->left=NULL;
+			p->right=NULL;
+			p->val = num;
+			tree->right = p;
+		}else{
+			if( num < tree->val )
+				tree->left = Insert( tree->left, num);
+			else
+				tree->right = Insert( tree->right, num);
+		}
+	}
+	tree->height = Getheight( tree );
+	AVL *q;
+	if( Judge( tree ) ){
+		if( num < tree->val && num < tree->left->val ){
+			q = tree->left;
+			tree->left = q->right;
+			q->right = tree;
+			tree = q;
+			tree->right->height = Getheight( tree->right );
+			tree->height = Getheight( tree );
+		}else if( num > tree->val && num > tree->right->val ){
+			q = tree->right;
+			tree->right = q->left;
+			q->left = tree;
+			tree = q;
+			tree->left->height = Getheight( tree->left);
+			tree->height = Getheight( tree );
+		}else if( num < tree->val && num > tree->left->val ){
+			q = tree->left->right;
+			tree->left->right = q->left;
+			q->left = tree->left;
+			tree->left = q->right;
+			q->right = tree;
+			tree = q;
+			tree->left->height = Getheight( tree->left);
+			tree->right->height = Getheight( tree->right);
+			tree->height = Getheight( tree );
+		}else if( num > tree->val && num < tree->right->val ){
+			q = tree->right->left;
+			tree->right->left = q->right;
+			q->right = tree->right;
+			tree->right = q->left;
+			q->left = tree;
+			tree = q;
+			tree->left->height = Getheight( tree->left);
+			tree->right->height = Getheight( tree->right);
+			tree->height = Getheight( tree );
+		}
+	}
+	return tree;
+	
+}
+
+int Getheight( AVL *tree )
+{
+	return Max( Get( tree->left ), Get( tree->right ))+1;
+}
+
+int Get( AVL *tree )
+{
+	if( tree == NULL )	return 0;
+	else	return tree->height;
+}
+
+
+int Max( int a, int b)
+{
+	return a >= b?a : b;
+}
+
+
+void Print( AVL *tree )
+{
+	if( tree != NULL){
+		printf("%d ", tree->val);
+		Print( tree->left );
+		Print( tree->right );
+		free(tree);
+	}
+}
+
+int Judge( AVL *tree )
+{
+	if( Get(tree->left) - Get(tree->right)< -1 || Get(tree->left) - Get(tree->right) > 1)	return 1;
+	else	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
