@@ -1,0 +1,179 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct Key{
+    char ID[11];
+    char PassWord[17];
+    struct Key *next;
+}Key;
+
+typedef struct TblNode{   	
+	Key *head;
+}Tbl;
+
+int Table( int n );
+void New( Tbl **a, int num);
+void Login( Tbl **a, int num);
+void Free( Tbl **a, int TableSize);
+int result( char *str, int TableSize);
+
+int main()
+{
+    int n;
+    scanf("%d", &n);getchar();
+    int i;
+    int TableSize;
+    TableSize = Table(n);
+    int Max = (int)pow(2,TableSize);
+    Tbl *a[(int)pow(2,TableSize)];
+    for( i=0; i<pow(2,TableSize); i++)
+    {
+    	a[i] = (Tbl *)malloc(sizeof( Tbl ));
+    	a[i]->head = NULL;
+	}
+    char command[3];
+    for( i=0; i<n; i++)
+    {
+        scanf("%s", command);
+        if( strcmp(command, "N")==0){
+            New(a, TableSize);
+        }
+        if( strcmp(command, "L")==0){
+            Login(a, TableSize);
+        }
+    }
+    
+    Free(a, TableSize);
+}
+
+int Table( int n )
+{
+	int i;
+	for( i=0; i<n; i++)
+	{
+		if( pow(2,i) < n && pow(2,i+1) >= n)
+			return i;
+	}
+    return 0;
+}
+
+void New( Tbl **a, int TableSize)
+{
+    Key *p, *q;
+    char ID[11];
+    char PassWord[17];
+    int temp;
+    scanf("%s", ID);
+    scanf("%s", PassWord);
+	temp = result(ID, TableSize);
+	if(a[temp]->head == NULL){
+		p = (Key *)malloc(sizeof( Key ));
+		strcpy( p->ID, ID);
+		strcpy( p->PassWord, PassWord);
+		p->next = NULL;
+		a[temp]->head = p;
+		printf("New: OK\n");
+		return;
+	}else{
+		p = a[temp]->head;
+		q = a[temp]->head;
+	}
+	while( p != NULL)
+	{
+		if( strcmp( ID, p->ID) == 0){
+			printf("ERROR: Exist\n");
+			return;
+		}else{
+			p = p->next;
+		}
+	}
+	p = (Key *)malloc(sizeof( Key ));
+	strcpy( p->ID, ID);
+	strcpy( p->PassWord, PassWord);
+	p->next = q->next;
+	q->next = p;
+	printf("New: OK\n");
+}
+
+
+void Login( Tbl **a, int TableSize)
+{
+    Key *p;
+    int temp;
+    char ID[11];
+    char PassWord[17];
+    scanf("%s", ID);
+    scanf("%s", PassWord);
+    temp = result(ID, TableSize);
+    if( a[temp]->head == NULL ){
+    	printf("ERROR: Not Exist\n");
+    	return;
+	}else{
+		p = a[temp]->head;
+	}
+    while( p != NULL )
+    {
+    	if( strcmp( p->ID, ID) == 0){
+    		if( strcmp( p->PassWord, PassWord) == 0 ){
+    			printf("Login: OK\n");
+    			return;
+			}else{
+				printf("ERROR: Wrong PW\n");
+				return;
+			}
+		}else{
+			p = p->next;
+		}
+	}
+	printf("ERROR: Not Exist\n");
+}
+
+int result( char *str, int TableSize)
+{
+	return (atoi(str)*2654435769) >> (32-TableSize);
+}
+
+
+void Free( Tbl **a, int TableSize)
+{
+	int i;
+	Key *p, *q;
+	for( i=0; i<pow(2, TableSize); i++)
+	{
+		if( a[i]->head == NULL){
+			free(a[i]);
+			a[i] = NULL;
+		}else{
+			p = a[i]->head;
+			while( p->next != NULL)
+			{
+				q = p->next;
+				free(p);
+				p = q;
+			}
+			free(p);
+			p = NULL;
+			q = NULL;
+            free(a[i]);
+			a[i] = NULL;
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
