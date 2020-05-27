@@ -1,0 +1,153 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
+typedef struct TNode{
+	int data;
+	struct TNode *Lchild;
+	struct TNode *Rchild;
+}Tnode;
+
+void guibing(int *a, int left, int right);//归并排序找到由小到大的序列
+Tnode* BuildTree(int *a, int left, int right);//建立完全搜索二叉树
+void Print(Tnode *head, int n);//层次遍历输出此二叉树
+
+int main()
+{
+	int n;
+	scanf("%d", &n);
+	int a[n];
+	int i;
+	Tnode *head;
+	for( i=0; i<n; i++)
+	{
+		scanf("%d", &a[i]);
+	}
+	guibing(a, 0, n-1);//归并从0到n-1的数组
+	head = BuildTree(a, 0, n-1);//返回完全搜索二叉树头节点
+	Print(head, n);//打印
+	
+	return 0;
+}
+
+void guibing(int *a, int left, int right)//归并排序
+{
+	int mid = (right+left)/2;
+	int cnt=0;
+	if( right - left >= 1){
+		guibing(a, left, mid);
+		guibing(a, mid+1, right);
+		int b[right-left+1];
+		int L=left, R=right, M=mid+1;
+		while(L<=mid && M<=right)
+		{
+			if( a[L] < a[M] ){
+				b[cnt] = a[L];
+				cnt++;	L++;
+			}else if( a[L] == a[M] ){
+				b[cnt] = a[L];	cnt++;	L++;
+				b[cnt] = a[M];	cnt++;	M++;
+			}else{
+				b[cnt] = a[M];
+				cnt++;	M++;
+			}
+		}
+		
+		if( L > mid ){
+			while( M<=right )
+			{
+				b[cnt] = a[M];
+				cnt++;	M++;
+			}
+		}else if( M > right ){
+			while( L<=mid )
+			{
+				b[cnt] = a[L];
+				cnt++;	L++;
+			}
+		}
+		int i;
+		L = left;
+		for( i=0; i<right-left+1; i++)
+		{
+			a[L] = b[i];
+			L++;
+		}
+	}else{
+		return;
+	}
+	
+}
+
+Tnode* BuildTree(int *a, int left, int right)
+{
+	int sum = right-left+1;
+	int num;
+	int i=0;
+	
+	if( right >= left ){
+		Tnode *p;
+		p = (Tnode *)malloc(sizeof( Tnode ));
+		while( 1 )
+		{
+			if( pow(2, i)-1 <= sum && pow(2, i+1)-1 > sum){
+				num = sum-pow(2, i)+1;
+				break;
+			}else{
+				i++;
+			}
+		}
+		if( num <= pow(2,i-1)){
+			num = (pow(2,i)-2)/2+num+left;//计算出头节点左边节点个数
+		}else{
+			num = (pow(2,i)-2)/2+pow(2,i-1)+left;
+		}
+		p->data = a[num];
+		p->Lchild = BuildTree(a, left, num-1);//调用递归
+		p->Rchild = BuildTree(a, num+1, right);
+		return p;
+	}else{
+		return NULL;
+	}
+}
+
+void Print(Tnode *head, int n)
+{
+	Tnode* a[n];
+	int left=0, right=1;
+	a[0] = head;
+	int flag=1;
+	while( left < right )
+	{
+		if( flag ){
+			printf("%d", a[left]->data);
+			flag = 0;
+		}else{
+			printf(" %d", a[left]->data);
+		}
+		if( a[left]->Lchild ){
+			a[right] = a[left]->Lchild;
+			right++;
+		}
+		if( a[left]->Rchild ){
+			a[right] = a[left]->Rchild;
+			right++;
+		}
+		free(a[left]);
+		a[left] = NULL;
+		left++;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
