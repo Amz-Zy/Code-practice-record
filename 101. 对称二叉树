@@ -1,0 +1,42 @@
+/*
+给定一个二叉树，检查它是否是镜像对称的
+采用递归算法：先判断根节点左右val是否相等接下来判断  根的左的左与根的右的右节点val是否相等，一共有三个判断依据1.左右值相等。2.递归调用左的左
+和右的右，返回bool值。3.递归调用左的右和右的左，返回bool值。   三个判断都为true返回true，否则返回false。
+空树返回true。
+*/
+
+
+/*
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+bool check(struct TreeNode* left, struct TreeNode* right)
+{
+    if( left == NULL && right ==NULL){
+        return true;
+    }else if( left == NULL || right == NULL ){
+        return false;
+    }
+
+    bool jud1 = (left->val == right->val);
+    bool jud2 = check(left->left, right->right);
+    bool jud3 = check(left->right, right->left);
+
+    if( jud1&&jud2&&jud3 )
+        return true;
+    else
+        return false;
+}
+
+bool isSymmetric(struct TreeNode* root){
+    bool left=true, right=true;
+    if( root == NULL)
+        return true;
+    
+    return check(root->left, root->right);
+}
