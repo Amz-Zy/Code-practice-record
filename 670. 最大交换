@@ -1,0 +1,51 @@
+/*
+给定一个非负整数，你至多可以交换一次数字中的任意两位。返回你能得到的最大值.
+输入: 2736
+输出: 7236
+解释: 交换数字2和数字7。
+*/
+/*
+暴力解法：把数字转换成数组，从队首通过比较每一个数字与后面数字的大小，如果该数字小于后面数字的最后面的最大值。则交换两者，退出循环
+时间复杂度：队列每一个元素都要与它后面的元素比较，O(n²)。
+空间复杂度：建立一个队列，O(lgn)。
+*/
+
+
+int maximumSwap(int num){
+    if( num <= 10)
+        return num;
+    int arr[9]={0};
+    int temp = num;
+    int index=0, max=0, cnt;
+    while(temp!=0)
+    {
+        arr[index] = temp%10;
+        temp/=10;index++;
+    }
+
+    int i, j;
+    for( i=index-1; i>=0; i--)
+    {
+    	max = 0;
+        for( j=i-1; j>=0; j--)
+        {
+        	if( max <= arr[j] ){
+        		max = arr[j];
+        		cnt = j;
+			}
+		}
+		if( max > arr[i]){
+			arr[cnt] = arr[i];
+			arr[i] = max;
+			break;
+		}
+    }
+
+    int result=0;
+    for( i=index-1; i>=0; i--)
+    {
+        result = result*10+arr[i];
+    }
+
+    return result;
+}
