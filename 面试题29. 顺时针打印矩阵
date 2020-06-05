@@ -1,0 +1,40 @@
+/*
+输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字。
+*/
+
+int* spiralOrder(int** matrix, int matrixSize, int* matrixColSize, int* returnSize){
+    if( !matrixSize ){
+        *returnSize = 0;
+        return NULL;
+    }
+    *returnSize = matrixSize*matrixColSize[0];
+    int *Order = (int *)malloc((*returnSize) * sizeof(int));
+    int num = 0;
+    int u=0, v=matrixColSize[0]-1, w=0, x=matrixSize-1;
+    int i;
+    while(num<(*returnSize))
+    {
+        for( i=u; num<*returnSize && i<=v; i++){
+            Order[num] = matrix[w][i];
+            num++;
+        }
+        w++;
+        for( i=w; num<*returnSize && i<=x; i++){
+            Order[num] = matrix[i][v];
+            num++;
+        }
+        v--;
+        for( i=v; num<*returnSize && i>=u; i--){
+            Order[num] = matrix[x][i];
+            num++;
+        }
+        x--;
+        for( i=x; num<*returnSize && i>=w; i--){
+            Order[num] = matrix[i][u];
+            num++;
+        }
+        u++;
+    }
+
+    return Order;
+}
