@@ -1,0 +1,60 @@
+/*
+给定一个由表示变量之间关系的字符串方程组成的数组，每个字符串方程 equations[i] 的长度为 4，
+并采用两种不同的形式之一："a==b" 或 "a!=b"。在这里，a 和 b 是小写字母（不一定不同），表示单字母变量名。
+只有当可以将整数分配给变量名，以便满足所有给定的方程时才返回 true，否则返回 false。 
+
+输入：["a==b","b!=a"]
+输出：false
+解释：如果我们指定，a = 1 且 b = 1，那么可以满足第一个方程，但无法满足第二个方程。没有办法分配变量同时满足这两个方程。
+*/
+/*
+并查集：建立一个int数组，将相等的元素指向同一个前驱，代表他们都是一个集合。
+        建立一个char数组，记录不相等的等式元素，如果不等号两边的是同一个元素就可以直接返回 false 。
+        从不等的集合中搜索int数组里的前驱，如果他们指向同一个前驱，说明他们是相等的，与“a！=b” 条件矛盾，返回false。
+        遍历完char数组没有返回false，说明所有元素都满足题目给的要求，就返回true。
+*/
+
+
+int find( int *arr, int x)
+{
+    return arr[x] == x ? x:find(arr, arr[x]);
+}
+
+bool equationsPossible(char ** equations, int equationsSize){
+    int arr[26];
+    char temp[equationsSize][3];
+    int i;
+    int num=0;
+    for( i=0; i<26; i++)
+    {
+        arr[i] = i;
+    }
+    int pre1, pre2;
+    for( i=0; i<equationsSize; i++ )
+    {
+        if( equations[i][1] == '=' && equations[i][0] != equations[i][3]){
+            pre1 = find(arr, equations[i][0]-'a');
+            pre2 = find(arr, equations[i][3]-'a');
+            if( pre1 != pre2 ){
+                arr[pre2] = pre1;
+            }
+        }
+        else if( equations[i][1] == '!' ){
+            if( equations[i][0] == equations[i][3] )
+                return false;
+            temp[num][0] = equations[i][0];
+            temp[num][1] = equations[i][3];
+            num++;
+        }
+    }
+
+    for( i=0; i<num; i++)
+    {
+        pre1 = find(arr, temp[i][0]-'a');
+        pre2 = find(arr, temp[i][1]-'a');
+        if( pre1 == pre2 )
+            return false;
+    }
+
+    return true;
+}
