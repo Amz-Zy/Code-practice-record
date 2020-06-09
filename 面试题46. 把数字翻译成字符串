@@ -1,0 +1,48 @@
+/*
+给定一个数字，我们按照如下规则把它翻译为字符串：0 翻译成 “a” ，1 翻译成 “b”，……，11 翻译成 “l”，……
+25 翻译成 “z”。一个数字可能有多个翻译。请编程实现一个函数，用来计算一个数字有多少种不同的翻译方法。
+输入: 12258
+输出: 5
+解释: 12258有5种不同的翻译，分别是"bccfi", "bwfi", "bczi", "mcfi"和"mzi"
+
+带有条件的动态规划：
+  如果前一位与后一位数字组合在10到25区间则dp[i] = dp[i-1]+dp[i-2];
+  因为把第i个数字单独拎出来看，排列组合数为dp[i-1];
+  而i与i-1可以组合成一个新的字母，这种情况是把i和i-1拎出来，排列组合数为dp[i-2]；
+  所以总的排列组合数为dp[i] = dp[i-1] + dp[i-2];
+*/
+
+int translateNum(int num){
+    if( num <= 9 )  return 1;
+    int ANum[10];
+    int temp=num;
+    int i=0;
+    while( temp > 0 )
+    {
+        ANum[i] = temp%10;
+        temp/=10;
+        i++;
+    }
+    i--;
+    int dp[10]={0};     
+
+    dp[0] = 1;
+    i--;
+    if( ANum[i+1]*10+ANum[i] >= 10 && ANum[i+1]*10+ANum[i] <= 25 )
+        dp[1] = 2;
+    else
+        dp[1] = 1;
+    int num0 = 2;
+    for( --i; i>=0; i--)
+    {
+        if( ANum[i+1]*10+ANum[i] >= 10 && ANum[i+1]*10+ANum[i] <= 25 ){
+            dp[num0] = dp[num0-1]+dp[num0-2];
+            num0++;
+        }else{
+            dp[num0] = dp[num0-1];
+            num0++;
+        }
+    }
+    num0--;
+    return dp[num0];
+}
