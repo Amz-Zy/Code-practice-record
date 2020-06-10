@@ -1,0 +1,24 @@
+/*
+判断一个整数是否是回文数。回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。
+双指针
+*/
+
+bool isPalindrome(int x){
+    if( x < 0 ) return false;
+    int arr[15]={0};
+    int i=0;
+    while( x > 0 )
+    {
+        arr[i] = x%10;
+        x /= 10;
+        i++;
+    }
+    int head=0, tail=i-1;
+    while( head < tail )
+    {
+        if( arr[head] != arr[tail] )    return false;
+        head++;tail--;
+    }
+
+    return true;
+}
