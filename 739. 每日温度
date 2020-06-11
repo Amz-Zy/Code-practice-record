@@ -1,0 +1,46 @@
+/*
+根据每日 气温 列表，请重新生成一个列表，对应位置的输出是需要再等待多久温度才会升高超过该日的天数。
+如果之后都不会升高，请在该位置用 0 来代替。
+例如，给定一个列表 temperatures = [73, 74, 75, 71, 69, 72, 76, 73]，你的输出应该是 [1, 1, 4, 2, 1, 1, 0, 0]
+
+第0天73度，第一天74度大于73所以return[0] = 1;
+第2天75度，只有第6天76度大于75，所以return[2] = 4;
+
+采用单调栈形式储存元素位置，对i向后遍历，if(空栈||i<栈顶元素)，把i存到栈顶;else(i>栈顶元素)出栈，把i-栈顶元素下标的值存到result中。最后
+栈中的下标对应的result都是0。
+*/
+
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* dailyTemperatures(int* T, int TSize, int* returnSize){
+    if( T == NULL || TSize == 0)    return NULL;
+    *returnSize = TSize;
+    int *res = (int *)malloc(sizeof(int) * TSize);
+    int stack[TSize];
+    int i, j=0, top=0;
+    for( i=0; i<TSize; i++)
+    {
+        if( top==0 || T[i] <= T[stack[top-1]] ){
+            stack[top] = i;
+            top++;
+        }else{
+            while( top > 0  && T[stack[top-1]] < T[i] )
+            {
+                res[stack[top-1]] = i-stack[top-1];
+                top--;
+            }
+            stack[top] = i;
+            top++;
+        }
+    }
+    while(top > 0)
+    {
+        top--;
+        res[stack[top]] = 0;
+    }
+
+    return res;
+
+}
