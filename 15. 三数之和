@@ -1,0 +1,73 @@
+/*
+给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有满足条件且不重复的三元组。
+注意：答案中不可以包含重复的三元组。
+
+给定数组 nums = [-1, 0, 1, 2, -1, -4]，
+
+满足要求的三元组集合为：
+[[-1, 0, 1],[-1, -1, 2]]
+*/
+/*
+先对数组从小到大进行排序，从第一个元素到倒数第二个元素扫描。
+建立一个双指针head和tail分别指向头和尾，每次对三者加和
+小于0则令head+1，会使三者之和增大，但要保持head始终小于中间数i；
+大于0则令tail-1，会使三者之和减小，保持tail始终大于中间数i；
+等于0则申请空间，分别记录数组中[head][i][tail]的值，并把head和tail同时向中间靠，并且head和tail的下一个值和上一个值不同，保证不重复。
+循环一轮之后讨论i是否与上一轮相同，若相同则不重置head和tail位置，避免重复；若不同则重置head和tail值分别指向头和尾
+时间复杂度：快排（nlogn），循环比较（n²）
+
+参考：
+作者：r0vHWU5AdJ
+链接：https://leetcode-cn.com/problems/3sum/solution/dui-zhuang-zhi-zhen-mo-xing-by-r0vhwu5adj/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+*/
+
+int cmp(const void* a, const void* b)
+{
+    return *(int*)a - *(int*)b; // 快排构造递增序列
+}
+
+int** threeSum(int* nums, int numsSize, int* returnSize, int** returnColumnSizes){
+    (*returnSize)=0;
+    if( numsSize < 2 )  return NULL;
+    int **result = (int **)malloc(sizeof( int * ) * numsSize * numsSize);
+    *returnColumnSizes = (int *)malloc(sizeof(int) * numsSize * numsSize);
+    int i;
+    int head=0, tail=numsSize-1;
+    qsort(nums, numsSize, sizeof(int), cmp);
+    for( i=1; i<numsSize-1; i++)
+    {
+        if( nums[i] != nums[i-1] ){
+            head = 0;
+            tail = numsSize-1;
+        }
+        while( head < i && tail > i)
+        {
+            if( nums[head] + nums[tail] + nums[i] < 0 ){
+                head++;
+            }else if( nums[head] + nums[tail] + nums[i] > 0 ){
+                tail--;
+            }else{
+                result[*returnSize] = (int *)malloc(sizeof( int ) * 3);
+                result[*returnSize][0] = nums[head];
+                result[*returnSize][1] = nums[i];
+                result[*returnSize][2] = nums[tail];
+                (*returnColumnSizes)[*returnSize] = 3;
+
+                (*returnSize) += 1;
+
+                while( nums[head+1] == nums[head] && head+1 < i )
+                    head++;//找出下一个与head不同的元素。（相同的话，要么重复，要么不等于0，减少时间）
+                head++;
+                while( nums[tail-1] == nums[tail] && tail-1 > i)
+                    tail--;//找出上一个与tail不同的元素。
+                tail--;
+            }
+        }
+        if( head >= i )  head = i;
+        if( tail <= i )  tail = i;
+    }
+
+    return result;
+}
