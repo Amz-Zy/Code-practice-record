@@ -1,0 +1,43 @@
+/*
+给你一个整数数组 arr 和一个目标值 target ，请你返回一个整数 value ，使得将数组中所有大于 value 的值变成 value 后，数组的和最接近  target （最接近表示两者之差的绝对值最小）。
+如果有多种使得和最接近 target 的方案，请你返回这些整数中的最小值。
+请注意，答案不一定是 arr 中的数字。
+1.进行非递增的排序
+2.用target和arrsize做除法算出平均最小值（不能整除的要判断是向下取整与target更接近还是向上取整），理想情况是数组最小下标的值≥平均值，那么所有
+数字都可以被该平均值取代，得到最接近target的数。
+3.如果平均值大于数组中的数，那么就向后遍历数组，找到一个比平均数要大的数把它重新最为数组最下标（如果数组最后一个数仍然小于平均数，则说明该数
+组之和就是最接近target的数，无法更改任一数字），重复第二步。直到最下标的数小于等于平均数。
+
+时间复杂度：快排（nlgn）  遍历一遍数组（n）。
+*/
+
+int cmp(const void*a,const void*b)
+{
+    return *(int*)a-*(int*)b;
+}
+
+int jud(int a, int b)
+{
+    if( b-b/a*a <= (b/a+1)*a-b)
+        return b/a;
+    else
+        return b/a+1;
+}
+int findBestValue(int* arr, int arrSize, int target){
+    if( arr == NULL || arrSize == 0)    return 0;
+    qsort( arr, arrSize, sizeof(int), cmp );
+    int result = jud(arrSize, target);
+    int num = 0;
+    int sum = 0;
+    while( result > arr[num] ){
+        while( result > arr[num] )
+        {
+            sum += arr[num];
+            num++;
+        }
+        result = jud(arrSize-num, target-sum);
+        if(result >= arr[arrSize-1])
+            return arr[arrSize-1];
+    }
+    return result;
+}
