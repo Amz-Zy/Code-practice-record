@@ -1,0 +1,72 @@
+/*
+我们从二叉树的根节点 root 开始进行深度优先搜索。
+在遍历中的每个节点处，我们输出 D 条短划线（其中 D 是该节点的深度），然后输出该节点的值。
+（如果节点的深度为 D，则其直接子节点的深度为 D + 1。根节点的深度为 0）。
+如果节点只有一个子节点，那么保证该子节点为左子节点。
+给出遍历输出 S，还原树并返回其根节点 root。
+
+思路：建立一个数组，保存每一层最右边节点的地址，即为该层父节点信息，再与上一次结果的层数对比，判断是父节点的左孩子还是右孩子
+*/
+
+
+typedef struct TreeNode Node;
+struct TreeNode* recoverFromPreorder(char * S){
+    if( S == NULL ) return NULL;
+    Node *head = (Node *)malloc(sizeof(Node));  //建立根节点
+    int i=0;
+    int val=0;
+    while(S[i] >= '0' && S[i] <= '9'){
+        val = val*10+(S[i] - '0');              //计算节点val值
+        i++;
+    }
+    head->val = val;
+    head->left = NULL;
+    head->right = NULL;
+    Node *temp = head;
+    Node *Arr[1005];                            //保存每层最右边的节点的地址
+    Arr[0] = head;                              //根节点存入数组下标为0的位置
+    int cnt1=0, cnt2=0;
+    for( i; i<strlen(S); i++)
+    {
+        val = 0;
+        while( S[i] == '-' ){
+            cnt2++;                             //找出该节点对应的层数
+            i++;
+        }
+        while( S[i] >= '0' && S[i] <= '9' ){
+            val = val*10+(S[i]-'0');
+            i++;
+        }
+        i--;
+        if( cnt1 < cnt2 ){//当上一个节点层数小于该节点，说明该节点为父节点左孩子
+            temp = (Node *)malloc(sizeof(Node));
+            temp->val = val;
+            temp->left = NULL;
+            temp->right = NULL;
+            Arr[cnt2-1]->left = temp;
+            Arr[cnt2] = temp;
+            cnt1 = cnt2;
+            cnt2 = 0;
+        }else if( cnt1 == cnt2 ){//当上一个节点层数等于该节点，说明该节点为父节点右孩子
+            temp = (Node *)malloc(sizeof(Node));
+            temp->val = val;
+            temp->left = NULL;
+            temp->right = NULL;
+            Arr[cnt2-1]->right = temp;
+            Arr[cnt2] = temp;//第cnt2层最右的节点已经是temp了，更新节点信息
+            cnt1 = cnt2;
+            cnt2 = 0;
+        }else{//当上一个节点层数大于该节点，说明该节点为父节点右孩子
+            temp = (Node *)malloc(sizeof(Node));
+            temp->val = val;
+            temp->left = NULL;
+            temp->right = NULL;
+            Arr[cnt2-1]->right = temp;
+            Arr[cnt2] = temp;//第cnt2层最右的节点已经是temp了，更新节点信息
+            cnt1 = cnt2;
+            cnt2 = 0;
+        }
+    }
+
+    return head;
+}
