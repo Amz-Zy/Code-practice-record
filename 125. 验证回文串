@@ -1,0 +1,44 @@
+/*
+给定一个字符串，验证它是否是回文串，只考虑字母和数字字符，可以忽略字母的大小写。
+说明：本题中，我们将空字符串定义为有效的回文串。
+
+双指针。
+*/
+
+
+
+bool isPalindrome(char * s){
+    if( s == NULL ) return false;
+    int low = 0, high = strlen(s)-1;
+    while( low <= high ){
+        while((s[low]<'A' || (s[low]>'Z' && s[low]<'a') || s[low]>'z') && low<=high ){
+            if( s[low] < '0' || s[low] > '9' )
+                low++;
+            else
+                break;
+        }
+        while((s[high]<'A' || (s[high]>'Z' && s[high]<'a') || s[high]>'z') && low<=high ){
+            if( s[high] < '0' || s[high] > '9' )
+                high--;
+            else
+                break;
+        }
+
+        if( low<=high ){
+            if( (s[low] >= 'a' && s[low] <= 'z') || (s[low] >= 'A' && s[low] <= 'Z' )){
+                if( s[high] >= '0' && s[high] <= '9' )
+                    return false;
+                if( s[high] != s[low] && s[high]-s[low] != 32 && s[low]-s[high] != 32)
+                    return false;
+            }else if( s[low] >= '0' && s[low] <= '9' ){
+                if( s[low] != s[high] ) 
+                    return false;
+            }
+        }
+        
+        low++;
+        high--;
+    }
+
+    return true;
+}
