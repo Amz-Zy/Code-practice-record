@@ -1,0 +1,38 @@
+/*
+给定一个非空二叉树，返回其最大路径和。
+
+本题中，路径被定义为一条从树中任意节点出发，达到任意节点的序列。该路径至少包含一个节点，且不一定经过根节点。
+*/
+
+
+
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+int max=-200000000;
+int Max(int a, int b){
+    return (a > b ? a : b);
+}
+int Visit(struct TreeNode* root){
+    if( root == NULL )  return 0;
+    int value;
+    int temp1=Visit(root->left), temp2=Visit(root->right);
+    value = Max(root->val+temp1, root->val+temp2);
+    value = Max(root->val, value);
+    max = Max(max, Max(value, root->val+temp1+temp2));
+    
+    return value;
+}
+int maxPathSum(struct TreeNode* root){
+    max = -200000000;//为什么这里不初始化就不行呢？
+    Visit(root);
+
+    return max;
+}
