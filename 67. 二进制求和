@@ -1,0 +1,81 @@
+/*
+给你两个二进制字符串，返回它们的和（用二进制表示）。
+输入为 非空 字符串且只包含数字 1 和 0。
+*/
+
+
+
+char * addBinary(char * a, char * b){
+    if( a==NULL && b==NULL )    return NULL;
+    else if( a==NULL )  return b;
+    else if( b==NULL )  return a;
+    int Alen, Blen;
+    int i;
+    if( strlen(a) >= strlen(b) ){
+        Alen = strlen(a);
+        Blen = strlen(b);
+        char *result = (char *)malloc(sizeof(char)*(Alen+2));
+        result[0] = '\0';
+        while(Blen>0){
+            a[Alen-1] += b[Blen-1]-'0';
+            i=Alen-1;
+            while( a[i] > '1' && i>0 ){
+                a[i-1] += 1;
+                a[i] -= 2;
+                i--;
+            }
+            Alen--;
+            Blen--;
+        }
+        Alen = strlen(a);
+        Blen = strlen(b);
+        if( a[0] >= '2' ){
+            result[0] = '1';
+            a[0] -= 2;
+            for( i=1; i<=Alen; i++){
+                result[i] = a[i-1];
+            }
+            result[Alen+1]='\0';
+            return result;
+        }else{
+            for( i=0; i<Alen; i++ ){
+                result[i] = a[i];
+            }
+            result[Alen]='\0';
+            return result;
+        }
+    }else{
+        Alen = strlen(b);
+        Blen = strlen(a);
+        char *result = (char *)malloc(sizeof(char)*(Alen+2));
+        result[0] = '\0';
+        while(Blen>0){
+            b[Alen-1] += a[Blen-1]-'0';
+            i=Alen-1;
+            while( b[i] > '1' && i>0 ){
+                b[i-1] += 1;
+                b[i] -= 2;
+                i--;
+            }
+            Alen--;
+            Blen--;
+        }
+        Alen = strlen(b);
+        Blen = strlen(a);
+        if( b[0] >= '2' ){
+            result[0] = '1';
+            b[0] -= 2;
+            for( i=1; i<=Alen; i++){
+                result[i] = b[i-1];
+            }
+            result[Alen+1]='\0';
+            return result;
+        }else{
+            for( i=0; i<Alen; i++ ){
+                result[i] = b[i];
+            }
+            result[Alen]='\0';
+            return result;
+        }
+    }
+}
