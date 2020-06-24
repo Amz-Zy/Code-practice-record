@@ -1,0 +1,49 @@
+/*
+给定一个包括 n 个整数的数组 nums 和 一个目标值 target。找出 nums 中的三个整数，使得它们的和与 target 最接近。返回这三个数的和。假定每组输入只存在唯一答案。
+*/
+
+
+
+int cmp(const void *a,const void *b){
+    return *(int*)a-*(int*)b;
+}
+
+int Close(int a, int b, int target){
+    int tempA, tempB;
+    if(a<target)    tempA = target-a;
+    else            tempA = a-target;
+    if(b<target)    tempB = target-b;
+    else            tempB = b-target;
+    if( tempA<=tempB)   return a;
+    else                return b;
+}
+
+int threeSumClosest(int* nums, int numsSize, int target){
+    if( nums == NULL || numsSize == 0 ) return 0;
+    qsort(nums,numsSize,sizeof(int),cmp);
+    int i;
+    int head, tail;
+    int result;
+    int flag = 1;
+    for( i=0; i<numsSize; i++ ){
+        head = i+1;
+        tail = numsSize-1;
+        while( head<tail){
+            if( flag ){
+                result = nums[i]+nums[head]+nums[tail];
+                flag = 0;
+            }else{
+                result = Close(result, nums[i]+nums[head]+nums[tail], target);
+            }
+            if( nums[i]+nums[head]+nums[tail] < target ){
+                head++;
+            }else if( nums[i]+nums[head]+nums[tail] > target ){
+                tail--;
+            }else{
+                return nums[i]+nums[head]+nums[tail];
+            }
+        }
+    }
+
+    return result;
+}
